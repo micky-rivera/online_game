@@ -14,6 +14,16 @@ app.post('/update', (req, res)=>{
     res.end();
 });
 
+app.get('/allplayers', async (req, res)=>{
+    socket.emit('get-players');
+    const playerList = new Promise((resolve, reject)=>{
+        socket.on('return-players', data=>{
+            resolve(data);
+        });
+    });
+    res.json(await playerList);
+});
+
 app.get('/', async (req, res) => {
   const client = path.join(__dirname, '..', 'client');
   const public = path.join(__dirname, '..', 'client', 'public');

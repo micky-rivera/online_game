@@ -10,6 +10,8 @@ class Map {
                 y: 50,
             }
         });
+        this.renderList = [this.player];
+        this.players = [];
     }
 
     startGameLoop() {
@@ -22,7 +24,43 @@ class Map {
 
             this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
 
-            this.player.draw(this.ctx);
+            /* fetch('http://localhost:8080/allplayers')
+            .then(res => res.json())
+            .then(data => {
+                this.players = data;
+            }); */
+            
+            if (this.players.length > 0) {
+                this.players.forEach(player => {
+                    const image = new Image();
+                    image.src = './assets/leftidle0.png';
+                    this.ctx.drawImage(
+                        image,
+                        0, //left cut
+                        0, //right cut
+                        32, //size of cut
+                        32, //size of cut, i like ya cut g
+                        player.x, //x position
+                        player.y, //y position
+                        32,
+                        32
+                    );
+                    /* const newForeign = new Foreign({
+                        id: player.id,
+                        position: {
+                            x: player.x,
+                            y: player.y
+                        }
+                    });
+                    if (!this.renderList.includes(newForeign)) {
+                        this.renderList.push(newForeign);
+                    } */
+                });
+            }
+
+            this.renderList.forEach(item => {
+                item.draw(this.ctx);
+            });
         };
         step();
     }
