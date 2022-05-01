@@ -1,5 +1,5 @@
-const overworld = new Overworld({
+const map = new Map({
     element: document.querySelector('.game-container')
 });
 
-overworld.init();
+map.init();
