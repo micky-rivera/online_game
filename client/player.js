@@ -14,8 +14,6 @@ class Player {
         }
         this.keysPressed = [];
 
-        fetch('http://localhost:8080/newsocket'); // creates new socket for the backend to connect to the global server
-
         document.addEventListener('keydown', (e) => {
             if (!this.keysPressed.includes(e.code)) {
                 this.keysPressed.push(e.code);
@@ -33,6 +31,16 @@ class Player {
         this.keysPressed.forEach(key=>{
             if (key === 'KeyD') {
                 this.position.x += 2;
+                fetch('http://localhost:8080/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    x: this.position.x,
+                    y: this.position.y
+                })
+        });
             }
             if (key === 'KeyA') {
                 this.position.x -= 2;
@@ -44,13 +52,6 @@ class Player {
                 this.position.y += 2;
             }
         })
-
-        /* fetch('http://localhost:8080/update', {
-            body: JSON.stringify({
-                x: this.position.x,
-                y: this.position.y
-            })
-        }); */
 
         this.isLoaded && ctx.drawImage(
             this.image,

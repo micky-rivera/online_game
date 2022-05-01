@@ -4,12 +4,14 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-let socket = 69;
+const socket = io('http://localhost:8000');
 
-app.get('/newsocket', (req, res)=>{
-    socket = io('http://localhost:8000');
-    res.end('all good');
+app.post('/update', (req, res)=>{
+    socket.emit('update-position', req.body);
+    res.end();
 });
 
 app.get('/', async (req, res) => {
