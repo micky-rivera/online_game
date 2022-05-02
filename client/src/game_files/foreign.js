@@ -10,6 +10,11 @@ class Foreign {
         }
     }
 
+    updatePosition(input) {
+        this.position.x = input.x;
+        this.position.y = input.y;
+    }
+
     draw(ctx) {
         this.isLoaded && ctx.drawImage(
             this.image,

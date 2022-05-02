@@ -2,7 +2,12 @@ import Player from "./player";
 import Foreign from "./foreign";
 import {io} from 'socket.io-client';
 
-const socket = io('http://localhost:8000');
+const url = process.env.NODE_ENV === "development"
+    ? "http://localhost:8000"
+    : "https://micky-game-socket.herokuapp.com/";
+
+const socket = io(url);
+
 class Map {
 
     constructor (config) {
@@ -21,7 +26,6 @@ class Map {
     }
 
     startGameLoop() {
-        let log = true;
         const step = () => {
             new Promise((resolve, reject) => {
                 setTimeout(()=>{
@@ -35,7 +39,7 @@ class Map {
             
             if (this.players.length > 0) {
                 this.players.forEach(player => {
-                    if (this.renderList.filter(item => item.id === player.id).length === 0) {
+                    if (this.renderList.filter(item => item.id === player.id).length === 0) { // if instance isnt already in the renderlist
                         const newForeign = new Foreign({
                             id: player.id,
                             position: {
@@ -44,6 +48,12 @@ class Map {
                             }
                         });
                         this.renderList.push(newForeign);
+                    } else { //if it already exists in there
+                        const element = this.renderList.filter(item => item.id === player.id)[0];
+                        element.updatePosition({
+                            x: player.x,
+                            y: player.y
+                        });
                     }
                 });
             }

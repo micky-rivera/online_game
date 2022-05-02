@@ -25,11 +25,9 @@ app.get('/allplayers', async (req, res)=>{
 });
 
 app.get('/', async (req, res) => {
-  const client = path.join(__dirname, '..', 'client');
-  const public = path.join(__dirname, '..', 'client', 'public');
-  app.use(express.static(client));
-  app.use(express.static(public));
-  res.sendFile(path.join(__dirname, '..', 'client', 'public' , 'index.html'));
+    const root = path.join(__dirname, "..", "client", "build");
+    app.use(express.static(root));
+    res.sendFile(path.join(__dirname, "..", "client", "build", "index.html"));
 });
 
 module.exports.app = app;
