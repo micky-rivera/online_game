@@ -10,6 +10,7 @@ class Map {
         this.canvas = this.element.querySelector('.game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.player = new Player({
+            socket: socket,
             position: {
                 x: 100,
                 y: 50,
@@ -50,11 +51,6 @@ class Map {
             this.renderList.forEach(item => {
                 item.draw(this.ctx);
             });
-
-            if (log && this.renderList.length > 1) {
-                console.log(this.renderList);
-                log = false
-            }
         };
         step();
     }

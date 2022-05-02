@@ -6,6 +6,7 @@ const defaultPosition = {
 class Player {
 
     constructor (config) {
+        this.socket = config.socket;
         this.position = config.position || defaultPosition;
         this.image = new Image();
         this.image.onload = () => {
@@ -41,16 +42,10 @@ class Player {
             if (key === 'KeyS') {
                 this.position.y += 2;
             }
-            /* fetch('http://localhost:8080/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    x: this.position.x,
-                    y: this.position.y
-                })
-            }); */
+            this.socket.emit('update-position', {
+                x: this.position.x,
+                y: this.position.y
+            });
         });
 
         this.isLoaded && ctx.drawImage(
