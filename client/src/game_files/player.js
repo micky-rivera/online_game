@@ -42,10 +42,12 @@ class Player {
             if (key === 'KeyS') {
                 this.position.y += 2;
             }
-            this.socket.emit('update-position', {
-                x: this.position.x,
-                y: this.position.y
-            });
+        });
+        
+        this.socket.emit('update-position', {
+            inputs: this.keysPressed,
+            x: this.position.x,
+            y: this.position.y
         });
 
         this.isLoaded && ctx.drawImage(

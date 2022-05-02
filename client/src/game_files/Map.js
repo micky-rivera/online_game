@@ -26,9 +26,15 @@ class Map {
     }
 
     startGameLoop() {
+        let truePositionTimer = 0;
         const step = () => {
             new Promise((resolve, reject) => {
                 setTimeout(()=>{
+                    if (truePositionTimer >= 30) {
+                        truePositionTimer = 0;
+                    } else {
+                        truePositionTimer++;
+                    }
                     resolve();
                 }, 17); // FRAMERATE HERE 34MS FOR 30FPS 17MS FOR 60FPS
             }).then(res => step());
@@ -50,12 +56,27 @@ class Map {
                         this.renderList.push(newForeign);
                     } else { //if it already exists in there
                         const element = this.renderList.filter(item => item.id === player.id)[0];
-                        element.updatePosition({
-                            x: player.x,
-                            y: player.y
-                        });
+                        element.updateInputs(player.inputs);
+                        if (truePositionTimer === 0) {
+                            element.updatePosition({
+                                x: player.x,
+                                y: player.y
+                            })
+                        }
                     }
                 });
+            }
+            // check if renderlist has an entity that isn't in playerlist
+            let oneToRemove = false;
+            this.renderList.forEach(item=>{
+                if (!this.players.filter(player => player.id === item.id).length > 0) {
+                    if(item.id !== undefined) {
+                        oneToRemove = item;
+                    }
+                }
+            });
+            if (oneToRemove) {
+                this.renderList = [...this.renderList].filter(item=>item.id !== oneToRemove.id);
             }
 
             this.renderList.forEach(item => {

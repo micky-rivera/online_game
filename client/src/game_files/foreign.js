@@ -8,6 +8,11 @@ class Foreign {
         this.image.onload = () => {
             this.isLoaded = true;
         }
+        this.keysPressed = [];
+    }
+
+    updateInputs(input) {
+        this.keysPressed = input;
     }
 
     updatePosition(input) {
@@ -16,6 +21,21 @@ class Foreign {
     }
 
     draw(ctx) {
+        this.keysPressed.forEach(key=>{
+            if (key === 'KeyD') {
+                this.position.x += 2;
+            }
+            if (key === 'KeyA') {
+                this.position.x -= 2;
+            }
+            if (key === 'KeyW') {
+                this.position.y -= 2;
+            }
+            if (key === 'KeyS') {
+                this.position.y += 2;
+            }
+        });
+
         this.isLoaded && ctx.drawImage(
             this.image,
             0, //left cut
