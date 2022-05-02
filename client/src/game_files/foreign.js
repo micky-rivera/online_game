@@ -4,7 +4,7 @@ class Foreign {
         this.id = config.id || 'fuck';
         this.position = config.position || { x: 150, y: 75 };
         this.image = new Image();
-        this.image.src = './assets/leftidle0.png';
+        this.image.src = require('../assets/leftidle0.png');
         this.image.onload = () => {
             this.isLoaded = true;
         }

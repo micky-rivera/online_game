@@ -1,5 +1,8 @@
 import Player from "./player";
+import Foreign from "./foreign";
+import {io} from 'socket.io-client';
 
+const socket = io('http://localhost:8000');
 class Map {
 
     constructor (config) {
@@ -17,6 +20,7 @@ class Map {
     }
 
     startGameLoop() {
+        let log = true;
         const step = () => {
             new Promise((resolve, reject) => {
                 setTimeout(()=>{
@@ -26,48 +30,39 @@ class Map {
 
             this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
 
-            /* fetch('http://localhost:8080/allplayers')
-            .then(res => res.json())
-            .then(data => {
-                this.players = data;
-            }); */
+            socket.emit('get-players');
             
             if (this.players.length > 0) {
                 this.players.forEach(player => {
-                    const image = new Image();
-                    image.src = '../assets/leftidle0.png';
-                    this.ctx.drawImage(
-                        image,
-                        0, //left cut
-                        0, //right cut
-                        32, //size of cut
-                        32, //size of cut, i like ya cut g
-                        player.x, //x position
-                        player.y, //y position
-                        32,
-                        32
-                    );
-                    /* const newForeign = new Foreign({
-                        id: player.id,
-                        position: {
-                            x: player.x,
-                            y: player.y
-                        }
-                    });
-                    if (!this.renderList.includes(newForeign)) {
+                    if (this.renderList.filter(item => item.id === player.id).length === 0) {
+                        const newForeign = new Foreign({
+                            id: player.id,
+                            position: {
+                                x: player.x,
+                                y: player.y
+                            }
+                        });
                         this.renderList.push(newForeign);
-                    } */
+                    }
                 });
             }
 
             this.renderList.forEach(item => {
                 item.draw(this.ctx);
             });
+
+            if (log && this.renderList.length > 1) {
+                console.log(this.renderList);
+                log = false
+            }
         };
         step();
     }
 
     init () {
+        socket.on('return-players', data => {
+            this.players = data;
+        });
         this.startGameLoop();
     }
 }
