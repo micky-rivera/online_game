@@ -28,7 +28,7 @@ class Map {
     startGameLoop() {
         let truePositionTimer = 0;
         const step = () => {
-            new Promise((resolve, reject) => {
+            new Promise((resolve, reject) => { // frame buffer to control framerate
                 setTimeout(()=>{
                     if (truePositionTimer >= 30) {
                         truePositionTimer = 0;
@@ -43,7 +43,7 @@ class Map {
 
             socket.emit('get-players');
             
-            if (this.players.length > 0) {
+            if (this.players.length > 0) { // going through playerlist and adding them to renderlist
                 this.players.forEach(player => {
                     if (this.renderList.filter(item => item.id === player.id).length === 0) { // if instance isnt already in the renderlist
                         const newForeign = new Foreign({
@@ -57,11 +57,17 @@ class Map {
                     } else { //if it already exists in there
                         const element = this.renderList.filter(item => item.id === player.id)[0];
                         element.updateInputs(player.inputs);
-                        if (truePositionTimer === 0) {
+                        /* if (truePositionTimer === 0) {
+                            element.updatePosition({ // need to change this to be gradual instead of instant
+                                x: player.x,
+                                y: player.y
+                            });
+                        } */
+                        if (player.inputs.length === 0) {
                             element.updatePosition({
                                 x: player.x,
                                 y: player.y
-                            })
+                            });
                         }
                     }
                 });
