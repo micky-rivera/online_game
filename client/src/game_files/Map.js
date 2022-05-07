@@ -26,15 +26,9 @@ class Map {
     }
 
     startGameLoop() {
-        let truePositionTimer = 0;
         const step = () => {
             new Promise((resolve, reject) => { // frame buffer to control framerate
                 setTimeout(()=>{
-                    if (truePositionTimer >= 30) {
-                        truePositionTimer = 0;
-                    } else {
-                        truePositionTimer++;
-                    }
                     resolve();
                 }, 17); // FRAMERATE HERE 34MS FOR 30FPS 17MS FOR 60FPS
             }).then(res => step());
@@ -57,12 +51,6 @@ class Map {
                     } else { //if it already exists in there
                         const element = this.renderList.filter(item => item.id === player.id)[0];
                         element.updateInputs(player.inputs);
-                        /* if (truePositionTimer === 0) {
-                            element.updatePosition({ // need to change this to be gradual instead of instant
-                                x: player.x,
-                                y: player.y
-                            });
-                        } */
                         if (player.inputs.length === 0) {
                             element.updatePosition({
                                 x: player.x,

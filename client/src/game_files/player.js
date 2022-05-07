@@ -12,8 +12,11 @@ class Player {
         this.image.onload = () => {
             this.isLoaded = true;
         }
-        this.image.src = require('../assets/leftidle0.png');
+        this.image.src = require('../assets/player.png');
         this.keysPressed = [];
+        this.animation = 'downidle';
+        this.animationFrame = 1;
+        this.animationTimer = 0;
 
         document.addEventListener('keydown', (e) => {
             if (!this.keysPressed.includes(e.code)) {
@@ -27,7 +30,22 @@ class Player {
         });
     }
 
+    animate() {
+        if(this.animationTimer >= 7) {
+            this.animationTimer = 0;
+            if (this.animationFrame < 3) {
+                this.animationFrame++;
+            } else {
+                this.animationFrame = 0;
+            }
+        } else {
+            this.animationTimer++;
+        }
+    }
+
     draw(ctx) {
+
+        this.animate();
 
         this.keysPressed.forEach(key=>{
             if (key === 'KeyD') {
@@ -43,7 +61,7 @@ class Player {
                 this.position.y += 2;
             }
         });
-        
+
         this.socket.emit('update-position', {
             inputs: this.keysPressed,
             x: this.position.x,
@@ -52,7 +70,7 @@ class Player {
 
         this.isLoaded && ctx.drawImage(
             this.image,
-            0, //left cut
+            this.animationFrame * 32, //left cut
             0, //right cut
             32, //size of cut
             32, //size of cut, i like ya cut g

@@ -2,10 +2,10 @@
     position: relative;
     width: 352px;
     height: 198px;
-    border: 1px solid white;
     margin: 0 auto;
+    background-color: white;
 
-    transform: scale(2.5) translateY(50%);
+    transform: scale(3.5) translateY(40%);
 }
 
 .game-container canvas {
