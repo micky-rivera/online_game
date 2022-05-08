@@ -31,9 +31,9 @@ class Player {
     }
 
     animate() {
-        if(this.animationTimer >= 7) {
+        if(this.animationTimer >= 5) {
             this.animationTimer = 0;
-            if (this.animationFrame < 3) {
+            if (this.animationFrame < 7) {
                 this.animationFrame++;
             } else {
                 this.animationFrame = 0;
@@ -49,16 +49,16 @@ class Player {
 
         this.keysPressed.forEach(key=>{
             if (key === 'KeyD') {
-                this.position.x += 2;
+                this.position.x += 1;
             }
             if (key === 'KeyA') {
-                this.position.x -= 2;
+                this.position.x -= 1;
             }
             if (key === 'KeyW') {
-                this.position.y -= 2;
+                this.position.y -= 1;
             }
             if (key === 'KeyS') {
-                this.position.y += 2;
+                this.position.y += 1;
             }
         });
 
@@ -70,10 +70,10 @@ class Player {
 
         this.isLoaded && ctx.drawImage(
             this.image,
-            this.animationFrame * 32, //left cut
-            0, //right cut
-            32, //size of cut
-            32, //size of cut, i like ya cut g
+            this.animationFrame * 32, //horizontal cut
+            5 * 32, //vertical cut (rows)
+            32, //size of cut x
+            32, //size of cut y, i like ya cut g
             this.position.x, //x position
             this.position.y, //y position
             32,
