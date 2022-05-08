@@ -14,7 +14,19 @@ class Player {
         }
         this.image.src = require('../assets/player.png');
         this.keysPressed = [];
-        this.animation = 'downidle';
+        this.animations = {
+            downidle: 0,
+            downrun: 1,
+            rightidle: 2,
+            rightrun: 3,
+            leftidle: 4,
+            leftrun: 5,
+            upidle: 6,
+            uprun: 7
+        }
+        this.facing = 'down';
+        this.idle = true;
+        this.currentAnimation = this.animations.downidle;
         this.animationFrame = 1;
         this.animationTimer = 0;
 
@@ -31,7 +43,9 @@ class Player {
     }
 
     animate() {
-        if(this.animationTimer >= 5) {
+        let time = 0;
+        this.idle ? time = 10 : time = 5;
+        if(this.animationTimer >= time) {
             this.animationTimer = 0;
             if (this.animationFrame < 7) {
                 this.animationFrame++;
@@ -49,18 +63,45 @@ class Player {
 
         this.keysPressed.forEach(key=>{
             if (key === 'KeyD') {
+                this.idle = false;
                 this.position.x += 1;
+                this.currentAnimation = this.animations.rightrun;
+                this.facing = 'right';
             }
             if (key === 'KeyA') {
+                this.idle = false;
                 this.position.x -= 1;
+                this.currentAnimation = this.animations.leftrun;
+                this.facing = 'left';
             }
             if (key === 'KeyW') {
+                this.idle = false;
                 this.position.y -= 1;
+                this.currentAnimation = this.animations.uprun;
+                this.facing = 'up';
             }
             if (key === 'KeyS') {
+                this.idle = false;
                 this.position.y += 1;
+                this.currentAnimation = this.animations.downrun;
+                this.facing = 'down';
             }
         });
+        if (this.keysPressed.length === 0) {
+            this.idle = true;
+            if (this.facing === 'down') {
+                this.currentAnimation = this.animations.downidle;
+            }
+            if (this.facing === 'right') {
+                this.currentAnimation = this.animations.rightidle;
+            }
+            if (this.facing === 'left') {
+                this.currentAnimation = this.animations.leftidle;
+            }
+            if (this.facing === 'up') {
+                this.currentAnimation = this.animations.upidle;
+            }
+        }
 
         this.socket.emit('update-position', {
             inputs: this.keysPressed,
@@ -71,7 +112,7 @@ class Player {
         this.isLoaded && ctx.drawImage(
             this.image,
             this.animationFrame * 32, //horizontal cut
-            5 * 32, //vertical cut (rows)
+            this.currentAnimation * 32, //vertical cut (rows)
             32, //size of cut x
             32, //size of cut y, i like ya cut g
             this.position.x, //x position
