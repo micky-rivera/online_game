@@ -34,10 +34,11 @@ class Foreign {
     }
 
     updatePosition(input) {
-        this.position.x = input.x;
-        this.position.y = input.y;
-        // this.currentAnimation = input.animation;
-        this.facing = input.facing;
+        if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+            this.position.x = input.x;
+            this.position.y = input.y;
+            this.facing = input.facing;
+        }
     }
 
     animate() {
