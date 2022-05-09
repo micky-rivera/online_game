@@ -65,8 +65,48 @@ class Player {
 
         this.animate();
 
+        // updated handleinput
+        let currentKey = this.keysPressed.reverse()[0];
+        if (currentKey === 'KeyD') {
+            // if currently on grid, change grid position to next
+            if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                this.position.x++;
+                this.specificPosition.x++;
+                this.idle = false;
+                this.currentAnimation = this.animations.rightrun;
+                this.facing = 'right';
+            }
+        }
+        if (currentKey === 'KeyA') {
+            if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                this.position.x--;
+                this.specificPosition.x--;
+                this.idle = false;
+                this.currentAnimation = this.animations.leftrun;
+                this.facing = 'left';
+            }
+        }
+        if (currentKey === 'KeyW') {
+            if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                this.position.y--;
+                this.specificPosition.y--;
+                this.idle = false;
+                this.currentAnimation = this.animations.uprun;
+                this.facing = 'up';
+            }
+        }
+        if (currentKey === 'KeyS') {
+            if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                this.position.y++;
+                this.specificPosition.y++;
+                this.idle = false;
+                this.currentAnimation = this.animations.downrun;
+                this.facing = 'down';
+            }
+        }
+
         // handle inputs
-        this.keysPressed.forEach(key=>{
+        /* this.keysPressed.forEach(key=>{
             if (key === 'KeyD') {
                 // if currently on grid, change grid position to next
                 if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
@@ -104,7 +144,7 @@ class Player {
                     this.facing = 'down';
                 }
             }
-        });
+        }); */
 
         //handling idle anims, NEEDS TO BE CHANGED
         if (this.keysPressed.length === 0) { // AND on grid position!
