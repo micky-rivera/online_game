@@ -61,19 +61,21 @@ class Map {
                             id: player.id,
                             position: {
                                 x: player.x,
-                                y: player.y
+                                y: player.y,
+                                animation: player.animation,
+                                facing: player.facing
                             }
                         });
                         this.renderList.push(newForeign);
                     } else { //if it already exists in there
                         const element = this.renderList.filter(item => item.id === player.id)[0];
                         element.updateInputs(player.inputs);
-                        if (player.inputs.length === 0) {
-                            element.updatePosition({
-                                x: player.x,
-                                y: player.y
-                            });
-                        }
+                        element.updatePosition({
+                            x: player.x,
+                            y: player.y,
+                            animation: player.animation,
+                            facing: player.facing,
+                        });
                     }
                 });
             }

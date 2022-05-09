@@ -141,11 +141,15 @@ class Player {
             }
         }
 
-        this.socket.emit('update-position', {
-            inputs: this.keysPressed,
-            x: this.position.x,
-            y: this.position.y
-        });
+        if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+            this.socket.emit('update-position', {
+                inputs: this.keysPressed,
+                x: this.position.x,
+                y: this.position.y,
+                animation: this.currentAnimation,
+                facing: this.facing
+            });
+        }
 
         this.isLoaded && ctx.drawImage(
             this.image,
