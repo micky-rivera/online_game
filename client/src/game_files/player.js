@@ -1,6 +1,6 @@
 const defaultPosition = {
-    x: 150,
-    y: 75,
+    x: 10,
+    y: 4,
 }
 
 class Player {
@@ -8,6 +8,10 @@ class Player {
     constructor (config) {
         this.socket = config.socket;
         this.position = config.position || defaultPosition;
+        this.specificPosition = {
+            x: this.position.x * 16 - 8,
+            y: this.position.y * 16 -1,
+        }
         this.image = new Image();
         this.image.onload = () => {
             this.isLoaded = true;
@@ -61,45 +65,79 @@ class Player {
 
         this.animate();
 
+        // handle inputs
         this.keysPressed.forEach(key=>{
             if (key === 'KeyD') {
-                this.idle = false;
-                this.position.x += 1;
-                this.currentAnimation = this.animations.rightrun;
-                this.facing = 'right';
+                // if currently on grid, change grid position to next
+                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                    this.position.x++;
+                    this.specificPosition.x++;
+                    this.idle = false;
+                    this.currentAnimation = this.animations.rightrun;
+                    this.facing = 'right';
+                }
             }
             if (key === 'KeyA') {
-                this.idle = false;
-                this.position.x -= 1;
-                this.currentAnimation = this.animations.leftrun;
-                this.facing = 'left';
+                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                    this.position.x--;
+                    this.specificPosition.x--;
+                    this.idle = false;
+                    this.currentAnimation = this.animations.leftrun;
+                    this.facing = 'left';
+                }
             }
             if (key === 'KeyW') {
-                this.idle = false;
-                this.position.y -= 1;
-                this.currentAnimation = this.animations.uprun;
-                this.facing = 'up';
+                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                    this.position.y--;
+                    this.specificPosition.y--;
+                    this.idle = false;
+                    this.currentAnimation = this.animations.uprun;
+                    this.facing = 'up';
+                }
             }
             if (key === 'KeyS') {
-                this.idle = false;
-                this.position.y += 1;
-                this.currentAnimation = this.animations.downrun;
-                this.facing = 'down';
+                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                    this.position.y++;
+                    this.specificPosition.y++;
+                    this.idle = false;
+                    this.currentAnimation = this.animations.downrun;
+                    this.facing = 'down';
+                }
             }
         });
-        if (this.keysPressed.length === 0) {
-            this.idle = true;
-            if (this.facing === 'down') {
-                this.currentAnimation = this.animations.downidle;
+
+        //handling idle anims, NEEDS TO BE CHANGED
+        if (this.keysPressed.length === 0) { // AND on grid position!
+            if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                this.idle = true;
+                if (this.facing === 'down') {
+                    this.currentAnimation = this.animations.downidle;
+                }
+                if (this.facing === 'right') {
+                    this.currentAnimation = this.animations.rightidle;
+                }
+                if (this.facing === 'left') {
+                    this.currentAnimation = this.animations.leftidle;
+                }
+                if (this.facing === 'up') {
+                    this.currentAnimation = this.animations.upidle;
+                }
             }
+        }
+
+        // if not on grid position, move towards that position
+        if (this.specificPosition.x !== this.position.x * 16 - 8 || this.specificPosition.y !== this.position.y * 16 - 1) {
             if (this.facing === 'right') {
-                this.currentAnimation = this.animations.rightidle;
+                this.specificPosition.x++;
             }
             if (this.facing === 'left') {
-                this.currentAnimation = this.animations.leftidle;
+                this.specificPosition.x--;
             }
             if (this.facing === 'up') {
-                this.currentAnimation = this.animations.upidle;
+                this.specificPosition.y--;
+            }
+            if (this.facing === 'down') {
+                this.specificPosition.y++;
             }
         }
 
@@ -115,8 +153,8 @@ class Player {
             this.currentAnimation * 32, //vertical cut (rows)
             32, //size of cut x
             32, //size of cut y, i like ya cut g
-            this.position.x, //x position
-            this.position.y, //y position
+            this.specificPosition.x, //x position
+            this.specificPosition.y, //y position
             32,
             32
         );

@@ -14,11 +14,16 @@ class Map {
         this.element = config.element;
         this.canvas = this.element.querySelector('.game-canvas');
         this.ctx = this.canvas.getContext('2d');
+        this.image = new Image();
+        this.image.onload = () => {
+            this.isLoaded = true;
+        }
+        this.image.src = require('../assets/background.png');
         this.player = new Player({
             socket: socket,
             position: {
-                x: 100,
-                y: 50,
+                x: 10,
+                y: 4
             }
         });
         this.renderList = [this.player];
@@ -34,6 +39,18 @@ class Map {
             }).then(res => step());
 
             this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+
+            this.isLoaded && this.ctx.drawImage(
+                this.image,
+                0, //horizontal cut
+                0, //vertical cut (rows)
+                352, //size of cut x
+                224, //size of cut y, i like ya cut g
+                0, //x position
+                0, //y position
+                352,
+                224
+            );
 
             socket.emit('get-players');
             

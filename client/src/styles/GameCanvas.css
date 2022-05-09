@@ -1,11 +1,11 @@
 .game-container {
     position: relative;
     width: 352px;
-    height: 198px;
+    height: 224px;
     margin: 0 auto;
     background-color: white;
 
-    transform: scale(3.5) translateY(40%);
+    transform: scale(4) translateY(40%);
 }
 
 .game-container canvas {
