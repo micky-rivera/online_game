@@ -7,6 +7,11 @@ class Foreign {
             x: this.position.x * 16 - 8,
             y: this.position.y * 16 -1,
         }
+        this.storedPosition = {
+            x: this.position.x * 16 - 8,
+            y: this.position.y * 16 -1,
+            facing: config.facing
+        }
         this.image = new Image();
         this.image.src = require('../assets/player.png');
         this.image.onload = () => {
@@ -34,10 +39,11 @@ class Foreign {
     }
 
     updatePosition(input) {
+        this.storedPosition = input;
         if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-            this.position.x = input.x;
-            this.position.y = input.y;
-            this.facing = input.facing;
+            this.position.x = this.storedPosition.x;
+            this.position.y = this.storedPosition.y;
+            this.facing = this.storedPosition.facing;
         }
     }
 
@@ -79,7 +85,7 @@ class Foreign {
                 this.currentAnimation = this.animations.downrun;
                 this.specificPosition.y++;
             }
-        } else {
+        } else { // otherwise, you are idle
             if (this.facing === 'right') {
                 this.idle = true;
                 this.currentAnimation = this.animations.rightidle;
