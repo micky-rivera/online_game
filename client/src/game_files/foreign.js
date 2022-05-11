@@ -12,8 +12,7 @@ class Foreign {
         this.image.onload = () => {
             this.isLoaded = true;
         }
-        this.keysPressed = [];
-        this.facing = config.facing; // get from server
+        this.facing = 'down';
         this.animations = {
             downidle: 0,
             downrun: 1,
@@ -27,18 +26,30 @@ class Foreign {
         this.currentAnimation = this.animations.downidle;
         this.animationFrame = 1;
         this.animationTimer = 0;
+        this.actionBacklog = [];
     }
 
-    updateInputs(input) {
-        this.keysPressed = input;
+    completeAction(action) {
+        if (action === 'move right') {
+            this.position.x++;
+            this.facing = 'right';
+        }
+        if (action === 'move left') {
+            this.position.x--;
+            this.facing = 'left';
+        }
+        if (action === 'move up') {
+            this.position.y--;
+            this.facing = 'up';
+        }
+        if (action === 'move down') {
+            this.position.y++;
+            this.facing = 'down';
+        }
     }
 
     updatePosition(input) {
-        if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-            this.position.x = input.x;
-            this.position.y = input.y;
-            this.facing = input.facing;
-        }
+        this.actionBacklog.push(input);
     }
 
     animate() {
@@ -59,6 +70,14 @@ class Foreign {
     draw(ctx) {
 
         this.animate();
+
+        // rolling through action backlog
+        if (this.actionBacklog.length > 0) {
+            if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
+                this.completeAction(this.actionBacklog[0]);
+                this.actionBacklog.shift();  
+            }
+        }
 
         // if not on grid position, move towards new grid position
         if (this.specificPosition.x !== this.position.x * 16 - 8 || this.specificPosition.y !== this.position.y * 16 - 1) {

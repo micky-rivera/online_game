@@ -6,11 +6,12 @@ const defaultPosition = {
 class Player {
 
     constructor (config) {
+        this.id = config.id;
         this.socket = config.socket;
         this.position = config.position || defaultPosition;
         this.specificPosition = {
             x: this.position.x * 16 - 8,
-            y: this.position.y * 16 -1,
+            y: this.position.y * 16 - 1,
         }
         this.image = new Image();
         this.image.onload = () => {
@@ -62,7 +63,6 @@ class Player {
     }
 
     draw(ctx) {
-
         this.animate();
 
         // updated handleinput
@@ -75,6 +75,11 @@ class Player {
                 this.idle = false;
                 this.currentAnimation = this.animations.rightrun;
                 this.facing = 'right';
+                this.action = 'move right';
+                this.socket.emit('update-action', {
+                    id: this.id,
+                    action: this.action
+                });
             }
         }
         if (currentKey === 'KeyA') {
@@ -84,6 +89,11 @@ class Player {
                 this.idle = false;
                 this.currentAnimation = this.animations.leftrun;
                 this.facing = 'left';
+                this.action = 'move left';
+                this.socket.emit('update-action', {
+                    id: this.id,
+                    action: this.action
+                });
             }
         }
         if (currentKey === 'KeyW') {
@@ -93,6 +103,11 @@ class Player {
                 this.idle = false;
                 this.currentAnimation = this.animations.uprun;
                 this.facing = 'up';
+                this.action = 'move up';
+                this.socket.emit('update-action', {
+                    id: this.id,
+                    action: this.action
+                });
             }
         }
         if (currentKey === 'KeyS') {
@@ -102,49 +117,13 @@ class Player {
                 this.idle = false;
                 this.currentAnimation = this.animations.downrun;
                 this.facing = 'down';
+                this.action = 'move down';
+                this.socket.emit('update-action', {
+                    id: this.id,
+                    action: this.action
+                });
             }
         }
-
-        // handle inputs
-        /* this.keysPressed.forEach(key=>{
-            if (key === 'KeyD') {
-                // if currently on grid, change grid position to next
-                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-                    this.position.x++;
-                    this.specificPosition.x++;
-                    this.idle = false;
-                    this.currentAnimation = this.animations.rightrun;
-                    this.facing = 'right';
-                }
-            }
-            if (key === 'KeyA') {
-                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-                    this.position.x--;
-                    this.specificPosition.x--;
-                    this.idle = false;
-                    this.currentAnimation = this.animations.leftrun;
-                    this.facing = 'left';
-                }
-            }
-            if (key === 'KeyW') {
-                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-                    this.position.y--;
-                    this.specificPosition.y--;
-                    this.idle = false;
-                    this.currentAnimation = this.animations.uprun;
-                    this.facing = 'up';
-                }
-            }
-            if (key === 'KeyS') {
-                if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-                    this.position.y++;
-                    this.specificPosition.y++;
-                    this.idle = false;
-                    this.currentAnimation = this.animations.downrun;
-                    this.facing = 'down';
-                }
-            }
-        }); */
 
         //handling idle anims, NEEDS TO BE CHANGED
         if (this.keysPressed.length === 0) { // AND on grid position!
@@ -181,13 +160,12 @@ class Player {
             }
         }
 
+        // if on grid, tell the server about myself
         if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
             this.socket.emit('update-position', {
-                inputs: this.keysPressed,
+                id: this.id,
                 x: this.position.x,
                 y: this.position.y,
-                animation: this.currentAnimation,
-                facing: this.facing
             });
         }
 

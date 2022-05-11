@@ -1,6 +1,7 @@
 import Player from "./player";
 import Foreign from "./foreign";
 import {io} from 'socket.io-client';
+import { v4 as uuid } from 'uuid';
 
 const url = process.env.NODE_ENV === "development"
     ? "http://localhost:8000"
@@ -11,6 +12,7 @@ const socket = io(url);
 class Map {
 
     constructor (config) {
+        this.id = uuid();
         this.element = config.element;
         this.canvas = this.element.querySelector('.game-canvas');
         this.ctx = this.canvas.getContext('2d');
@@ -20,6 +22,7 @@ class Map {
         }
         this.image.src = require('../assets/background.png');
         this.player = new Player({
+            id: this.id,
             socket: socket,
             position: {
                 x: 10,
@@ -40,6 +43,12 @@ class Map {
 
             this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
 
+            // check if socket has changed for whatever reason
+            if (this.player.socket.id !== socket.id) {
+                this.player.socket = socket;
+            }
+
+            // draw background
             this.isLoaded && this.ctx.drawImage(
                 this.image,
                 0, //horizontal cut
@@ -52,7 +61,7 @@ class Map {
                 224
             );
 
-            socket.emit('get-players');
+            socket.emit('get-players', this.id);
             
             if (this.players.length > 0) { // going through playerlist and adding them to renderlist
                 this.players.forEach(player => {
@@ -62,20 +71,10 @@ class Map {
                             position: {
                                 x: player.x,
                                 y: player.y,
-                                animation: player.animation,
-                                facing: player.facing
+                                action: player.action
                             }
                         });
                         this.renderList.push(newForeign);
-                    } else { //if it already exists in there
-                        const element = this.renderList.filter(item => item.id === player.id)[0];
-                        element.updateInputs(player.inputs);
-                        element.updatePosition({
-                            x: player.x,
-                            y: player.y,
-                            animation: player.animation,
-                            facing: player.facing,
-                        });
                     }
                 });
             }
@@ -83,7 +82,7 @@ class Map {
             let oneToRemove = false;
             this.renderList.forEach(item=>{
                 if (!this.players.filter(player => player.id === item.id).length > 0) {
-                    if(item.id !== undefined) {
+                    if(item.id !== this.player.id) {
                         oneToRemove = item;
                     }
                 }
@@ -102,6 +101,12 @@ class Map {
     init () {
         socket.on('return-players', data => {
             this.players = data;
+        });
+        socket.on('return-new-action', data => {
+            const element = this.renderList.filter(player => player.id === data.id)[0];
+            if (element.id !== this.player.id) {
+                element.updatePosition(data.action);
+            }
         });
         this.startGameLoop();
     }
