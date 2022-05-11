@@ -108,6 +108,9 @@ class Map {
                 element.updatePosition(data.action);
             }
         });
+        socket.on('disconnect', () => {
+            console.log('youve been disconnected');
+        })
         this.startGameLoop();
     }
 }

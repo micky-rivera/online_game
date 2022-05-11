@@ -34,6 +34,8 @@ class Player {
         this.currentAnimation = this.animations.downidle;
         this.animationFrame = 1;
         this.animationTimer = 0;
+        this.currentX = 'idk';
+        this.currentY = 'idk';
 
         document.addEventListener('keydown', (e) => {
             if (!this.keysPressed.includes(e.code)) {
@@ -162,11 +164,15 @@ class Player {
 
         // if on grid, tell the server about myself
         if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-            this.socket.emit('update-position', {
-                id: this.id,
-                x: this.position.x,
-                y: this.position.y,
-            });
+            if(this.currentX !== this.specificPosition.x || this.currentY !== this.specificPosition.y) {
+                this.socket.emit('update-position', {
+                    id: this.id,
+                    x: this.position.x,
+                    y: this.position.y,
+                });
+                this.currentX = this.specificPosition.x;
+                this.currentY = this.specificPosition.y;
+            }
         }
 
         this.isLoaded && ctx.drawImage(
