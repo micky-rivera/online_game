@@ -91,7 +91,8 @@ class Map {
                 this.renderList = [...this.renderList].filter(item=>item.id !== oneToRemove.id);
             }
 
-            this.renderList.forEach(item => {
+            [...this.renderList].sort((a,b)=>a.specificPosition.y - b.specificPosition.y)
+            .forEach(item => {
                 item.draw(this.ctx);
             });
         };

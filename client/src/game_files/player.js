@@ -18,6 +18,11 @@ class Player {
             this.isLoaded = true;
         }
         this.image.src = require('../assets/player.png');
+        this.shadow = new Image();
+        this.shadow.onload = () => {
+            this.shadowLoaded = true;
+        }
+        this.shadow.src = require('../assets/shadow.png');
         this.keysPressed = [];
         this.animations = {
             downidle: 0,
@@ -179,6 +184,17 @@ class Player {
             this.image,
             this.animationFrame * 32, //horizontal cut
             this.currentAnimation * 32, //vertical cut (rows)
+            32, //size of cut x
+            32, //size of cut y, i like ya cut g
+            this.specificPosition.x, //x position
+            this.specificPosition.y, //y position
+            32,
+            32
+        );
+        this.shadowLoaded && ctx.drawImage(
+            this.shadow,
+            0, //horizontal cut
+            0, //vertical cut (rows)
             32, //size of cut x
             32, //size of cut y, i like ya cut g
             this.specificPosition.x, //x position
