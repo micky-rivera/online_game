@@ -1,17 +1,22 @@
 class Foreign {
 
     constructor (config) {
-        this.id = config.id || 'fuck';
+        this.id = config.id || 'placeholderID';
         this.position = config.position || { x: 7, y: 5 };
         this.specificPosition = {
             x: this.position.x * 16 - 8,
             y: this.position.y * 16 -1,
         }
         this.image = new Image();
-        this.image.src = require('../assets/player.png');
         this.image.onload = () => {
             this.isLoaded = true;
         }
+        this.image.src = require('../assets/player.png');
+        this.shadow = new Image();
+        this.shadow.onload = () => {
+            this.shadowLoaded = true;
+        }
+        this.shadow.src = require('../assets/shadow.png');
         this.facing = 'down';
         this.animations = {
             downidle: 0,
@@ -117,6 +122,17 @@ class Foreign {
             }
         }
 
+        this.shadowLoaded && ctx.drawImage(
+            this.shadow,
+            0, //horizontal cut
+            0, //vertical cut (rows)
+            32, //size of cut x
+            32, //size of cut y, i like ya cut g
+            this.specificPosition.x, //x position
+            this.specificPosition.y, //y position
+            32,
+            32
+        );
         this.isLoaded && ctx.drawImage(
             this.image,
             this.animationFrame * 32, //horizontal cut

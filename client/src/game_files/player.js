@@ -1,3 +1,5 @@
+import collisions from './collisions';
+
 const defaultPosition = {
     x: 10,
     y: 4,
@@ -77,16 +79,27 @@ class Player {
         if (currentKey === 'KeyD') {
             // if currently on grid, change grid position to next
             if (this.specificPosition.x === this.position.x * 16 - 8 && this.specificPosition.y === this.position.y * 16 - 1) {
-                this.position.x++;
-                this.specificPosition.x++;
+
                 this.idle = false;
                 this.currentAnimation = this.animations.rightrun;
                 this.facing = 'right';
-                this.action = 'move right';
-                this.socket.emit('update-action', {
-                    id: this.id,
-                    action: this.action
+
+                let colliding = false;
+                collisions.forEach(coord => {
+                    if (coord[0] === this.position.x + 1 && coord[1] === this.position.y + 1) {
+                        colliding = true;
+                    } 
                 });
+
+                if (colliding === false) {
+                    this.position.x++;
+                    this.specificPosition.x++;
+                    this.action = 'move right';
+                    this.socket.emit('update-action', {
+                        id: this.id,
+                        action: this.action
+                    });
+                }
             }
         }
         if (currentKey === 'KeyA') {
@@ -180,10 +193,10 @@ class Player {
             }
         }
 
-        this.isLoaded && ctx.drawImage(
-            this.image,
-            this.animationFrame * 32, //horizontal cut
-            this.currentAnimation * 32, //vertical cut (rows)
+        this.shadowLoaded && ctx.drawImage(
+            this.shadow,
+            0, //horizontal cut
+            0, //vertical cut (rows)
             32, //size of cut x
             32, //size of cut y, i like ya cut g
             this.specificPosition.x, //x position
@@ -191,10 +204,10 @@ class Player {
             32,
             32
         );
-        this.shadowLoaded && ctx.drawImage(
-            this.shadow,
-            0, //horizontal cut
-            0, //vertical cut (rows)
+        this.isLoaded && ctx.drawImage(
+            this.image,
+            this.animationFrame * 32, //horizontal cut
+            this.currentAnimation * 32, //vertical cut (rows)
             32, //size of cut x
             32, //size of cut y, i like ya cut g
             this.specificPosition.x, //x position
